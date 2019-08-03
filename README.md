@@ -1,3 +1,13 @@
+## README
+
+「用 D3 和 React 造一个更科学的 TreeMap」一文源码
+
+* GitHub <https://github.com/hijiangtao/d3-treemap-with-react-demo>
+* 博文 <https://hijiangtao.github.io/2019/08/03/Code-TreeMap-with-D3-and-React/>
+* 在线 Demo <https://hijiangtao.github.io/d3-treemap-with-react-demo/>
+
+----
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
