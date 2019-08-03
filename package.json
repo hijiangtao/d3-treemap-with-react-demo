@@ -36,5 +36,6 @@
   },
   "devDependencies": {
     "@types/d3": "^5.7.2"
-  }
+  },
+  "homepage" : "http://hijiangtao.github.io/d3-treemap-with-react-demo"
 }
