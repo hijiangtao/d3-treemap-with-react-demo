@@ -1,69 +1,42 @@
 import React, { useRef, useLayoutEffect, useState, useEffect, memo, FunctionComponent } from 'react';
 import * as d3 from 'd3';
 
-import {UID} from './UID';
+import {
+  UID,
+  format,
+  getColorSchema,
+  validateDatasets,
+  getLayout,
+} from './utils.js';
 
-const format = d3.format(",d");
-const getColorSchema = (data = []) => {
-  // 这里的 data 是处理过后的 children 内容
-  return d3.scaleOrdinal(
-    data.map(d => d.name), 
-    d3.schemeCategory10.map(d => d3.interpolateRgb(d, "white")(0.5))
-  );
-};
-const getMaxs = (data, index = -1) => {
-  const sums = data.keys.map((d, i) => d3.hierarchy(data).sum(d => d.values ? Math.round(d.values[i]) : 0).value);
-  return index === -1 ? d3.max(sums) : sums[index];
-}
-const validateDatasets = (data, index) => {
-  return data.keys && data.children && data.keys.length >= index && index !== -1;
-}
+// interface TreeMapProps {
+//   index?: number,
+//   animation?: boolean,
+//   data?: {
+//     keys: [],
+//     children: []
+//   },
+//   configs: {
+//     width?: number,
+//     height?: number,
+//     tileType?: string,
+//     maxLayout?: boolean,
+//     sortTransition?: boolean,
+//   }
+// }
 
-const getLayout = (mapdata, index, configs) => {
-  const {width, height, tileType = 'treemapSlice', maxLayout, sortTransition} = configs;
-  const tm = d3.treemap()
-    .tile(d3[tileType])
-    .size([width, height])
-    .padding(d => d.height === 1 ? 1 : 0)
-    .round(true);
-  
-  const root = tm(d3.hierarchy(mapdata)
-    .sum(d => {
-      return d.values ? d.values[index] : 0
-    })
-    .sort((a, b) => {
-      return b.value - a.value
-    }));
+// interface ChartProps {
+//   layout: any,
+//   color: any,
+//   ID: string
+// }
 
-  return function() {
-    const maxIndex = maxLayout ? -1 : index;
-    const k = Math.sqrt(root.sum(d => d.values ? d.values[index] : 0).value / getMaxs(mapdata, maxIndex));
-    const x = (1 - k) / 2 * width;
-    const y = (1 - k) / 2 * height;
-
-    const leaves = tm.size([width * k, height * k])(root)
-      .each(d => (d.x0 += x, d.x1 += x, d.y0 += y, d.y1 += y))
-      .leaves();
-
-    // 不固定排序布局
-    if (!mapdata.children[0].values || !sortTransition) return leaves;
-
-    const newLeaves = new Array(leaves.length);
-    const keyList = mapdata.children.map(({id}) => id);
-    leaves.map(item => {
-      const itemIndex = keyList.indexOf(item.data.id);
-      newLeaves[itemIndex] = item;
-    })
-
-    return newLeaves;
-  };
-}
-
-const chart = ({ 
-  layout,
-  color,
-  ID 
-}) => {
+const chart = (props) => {
+  const { 
+    layout,
+    color,
+    ID 
+  } = props;
   // svg 画布
   if (document.getElementById(ID)) {
     return update(d3.select(`#${ID}`).selectAll("g"));
@@ -75,9 +48,7 @@ const chart = ({
     .selectAll("g")
     .data(layout)
     .join("g")
-    .attr("transform", d => {
-      return `translate(${d.x0},${d.y0})`;
-    });
+    .attr("transform", (d) => `translate(${d.x0},${d.y0})`);
 
   leaf.append("rect")
     .attr("id", d => (d.leafUid = UID('leaf')).id)
@@ -127,24 +98,7 @@ const chart = ({
   }
 }
 
-interface TreeMapProps {
-  index?: number,
-  animation?: boolean,
-  // Todo
-  data?: {
-    keys: [],
-    children: []
-  },
-  configs: {
-    width?: number,
-    height?: number,
-    tileType?: string,
-    maxLayout?: boolean,
-    sortTransition?: boolean,
-  }
-}
-
-const TreeMap:FunctionComponent<TreeMapProps> = memo((props: TreeMapProps) => {
+const TreeMap = (props) => {
   const { index, data, animation, configs = {} } = props;
   const IDRef = useRef(UID('treemap').id);
 
@@ -184,21 +138,22 @@ const TreeMap:FunctionComponent<TreeMapProps> = memo((props: TreeMapProps) => {
       color: getColorSchema(data.children),
       ID: IDRef.current
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tileType, maxLayout, sortTransition, frameIndex]);
 
   return (
     <svg
       id={`${IDRef.current}_svg`}
       style={{
-        width: '100%',
-        height: 'auto',
-        overflow: "visible",
+        width: `${parseInt(configs.width) ? configs.width : 400}`,
+        height: `${parseInt(configs.height) ? configs.height : 400}`,
+        overflow: "hidden",
         fontSize: `${parseInt(configs.width) ? Math.floor(configs.width / 400)*5 : 10}px`
       }}
       viewBox={`0 0 ${parseInt(configs.width) ? configs.width : 400} ${parseInt(configs.height) ? configs.height : 400}`}
     >
     </svg>
   )
-});
+};
 
 export default TreeMap;

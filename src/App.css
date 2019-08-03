@@ -1,3 +1,17 @@
 .App {
   background-color: #282c34;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  padding: 10px;
+
+  color: white;
+}
+a {
+  color: gray;
+  padding-bottom: 10px;
+}
+
+svg {
+  padding: 10px 0;
 }
