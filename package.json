@@ -17,7 +17,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -35,7 +37,8 @@
     ]
   },
   "devDependencies": {
-    "@types/d3": "^5.7.2"
+    "@types/d3": "^5.7.2",
+    "gh-pages": "^2.1.0"
   },
-  "homepage" : "http://hijiangtao.github.io/d3-treemap-with-react-demo"
+  "homepage": "http://hijiangtao.github.io/d3-treemap-with-react-demo"
 }
