@@ -11,6 +11,7 @@ const useInitData = () => {
   const [animation, setAnimation] = useState(false);
   const [maxLayout, setMaxLayout] = useState(false);
   const [tileType, setTileType] = useState(tileTypes[0]);
+  const [sortTransition, setSortTransition] = useState(true);
   const [width, height] = [600, 400];
 
   return [
@@ -23,7 +24,9 @@ const useInitData = () => {
     maxLayout,
     setMaxLayout,
     tileType,
-    setTileType
+    setTileType,
+    sortTransition,
+    setSortTransition
   ]
 }
 
@@ -39,6 +42,8 @@ function App() {
     setMaxLayout,
     tileType,
     setTileType,
+    sortTransition,
+    setSortTransition
   ] = useInitData();
 
   return (
@@ -50,6 +55,9 @@ function App() {
           </Col>
           <Col span={5}>
             <Checkbox checked={maxLayout} onChange={(e) => setMaxLayout(e.target.checked)}>最大化计算</Checkbox>
+          </Col>
+          <Col span={5}>
+            <Checkbox checked={sortTransition} onChange={(e) => setSortTransition(e.target.checked)}>动画是否溯源</Checkbox>
           </Col>
           <Col span={5}>
             <Slider 
@@ -79,6 +87,7 @@ function App() {
           height,
           tileType,
           maxLayout,
+          sortTransition,
         }}
         index={count}
         animation={animation}
